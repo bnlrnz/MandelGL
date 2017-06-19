@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
         //restore rendering state
         this.mandelSurfaceView?.renderer?.positionX = savedInstanceState?.getDouble("positionX")?:0.0
-        this.mandelSurfaceView?.renderer?.positionY = savedInstanceState?.getDouble("positionX")?:0.0
+        this.mandelSurfaceView?.renderer?.positionY = savedInstanceState?.getDouble("positionY")?:0.0
         this.mandelSurfaceView?.renderer?.scale = savedInstanceState?.getDouble("scale")?:75.0
         this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.valueOf(savedInstanceState?.getString("theme")?:"firehue")
     }
