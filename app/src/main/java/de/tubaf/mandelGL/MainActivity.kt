@@ -47,4 +47,24 @@ class MainActivity : AppCompatActivity() {
             this.mandelSurfaceView?.requestRender()
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+        //save rendering state
+        outState?.putDouble("positionX", this.mandelSurfaceView?.renderer?.positionX?:0.0)
+        outState?.putDouble("positionY", this.mandelSurfaceView?.renderer?.positionY?:0.0)
+        outState?.putDouble("scale", this.mandelSurfaceView?.renderer?.scale?:75.0)
+        outState?.putString("theme", this.mandelSurfaceView?.renderer?.hueTexture.toString())
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        //restore rendering state
+        this.mandelSurfaceView?.renderer?.positionX = savedInstanceState?.getDouble("positionX")?:0.0
+        this.mandelSurfaceView?.renderer?.positionY = savedInstanceState?.getDouble("positionX")?:0.0
+        this.mandelSurfaceView?.renderer?.scale = savedInstanceState?.getDouble("scale")?:75.0
+        this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.valueOf(savedInstanceState?.getString("theme")?:"firehue")
+    }
 }

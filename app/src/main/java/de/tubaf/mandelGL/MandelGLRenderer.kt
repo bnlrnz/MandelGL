@@ -94,6 +94,8 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
             it.invoke()
         }
 
+        this.glTasks.clear()
+
         GLES30.glUniform2f(this.gaussianPositionUniform, this.positionX.toFloat(), this.positionY.toFloat())
         MandelGLRenderer.checkError( dbgDomain,  "Failed to provide uniform (gaussianPosition)")
 
@@ -128,8 +130,7 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         initializeShaders()
         initializeTextures()
 
-        //set initial texture/theme
-        this.hueTexture = HueTexture.firehue
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, this.hueTextures.get(this.hueTexture)!!)
 
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
     }
