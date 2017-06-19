@@ -15,7 +15,13 @@ import android.view.ScaleGestureDetector
 class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceView(context, attrs), ScaleGestureDetector.OnScaleGestureListener, GestureDetector.OnGestureListener {
     private val DENSITY = getContext().resources.displayMetrics.density
 
-    private var superSamplingFactor = 2
+    var superSamplingFactor = 2.0
+        set(value) {
+            if (value in 0.5..3.0) {
+                field = superSamplingFactor
+
+            }
+        }
 
     internal val renderer = MandelGLRenderer(context)
 
@@ -46,7 +52,7 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
         val contentWidth = (w / DENSITY).toInt()
         val contentHeight = (h / DENSITY).toInt()
 
-        holder.setFixedSize((contentWidth * this.superSamplingFactor), (contentHeight * this.superSamplingFactor))
+        holder.setFixedSize((contentWidth * this.superSamplingFactor).toInt(), (contentHeight * this.superSamplingFactor).toInt())
     }
 
 
