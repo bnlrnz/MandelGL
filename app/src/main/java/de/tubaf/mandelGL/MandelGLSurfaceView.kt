@@ -2,11 +2,11 @@ package de.tubaf.mandelGL
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import android.support.v4.view.GestureDetectorCompat
+import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
-import android.support.v4.view.GestureDetectorCompat
-import android.util.AttributeSet
 
 /**
 * Created by lorenz on 16.06.17 for de.tubaf.lndw
@@ -75,17 +75,19 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
     }
 
     override fun onScale(detector: ScaleGestureDetector?): Boolean {
-        detector!!
+        val unwrappedDetector: ScaleGestureDetector = detector ?: return false;
 
         //Get the pinch center:
-        val point = floatArrayOf(detector.focusX / this.DENSITY, detector.focusY / this.DENSITY)
+        val point = floatArrayOf(unwrappedDetector.focusX / this.DENSITY, unwrappedDetector.focusY / this.DENSITY)
+
+        //println("Pinch Center: ${point[0]}, ${point[1]}")
 
         //Convert to Gaussian:
         val centerX = this.renderer.positionX + (point[0] - 0.5f * this.renderer.frameWidth) / this.renderer.scale
         val centerY = this.renderer.positionY - (point[1] - 0.5f * this.renderer.frameHeight) / this.renderer.scale
 
         //Execute the scale:
-        this.renderer.scale = this.renderer.scale * detector.scaleFactor.toDouble()
+        this.renderer.scale = this.renderer.scale * unwrappedDetector.scaleFactor.toDouble()
 
         //Move the saved Gaussian back to the center point:
         this.renderer.positionX = centerX - (point[0] - 0.5f * this.renderer.frameWidth) / this.renderer.scale
@@ -112,10 +114,6 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
         return false
     }
 
-    private var currentTexture = 0
     override fun onLongPress(e: MotionEvent?) {
-        this.renderer.hueTexture = HueTexture.values()[currentTexture % 4]
-        this.currentTexture++
-        requestRender()
     }
 }
