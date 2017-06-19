@@ -128,6 +128,9 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         initializeShaders()
         initializeTextures()
 
+        //set initial texture/theme
+        this.hueTexture = HueTexture.firehue
+
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
     }
 
