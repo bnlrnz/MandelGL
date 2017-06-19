@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
                 var newVal = p1
                 if (newVal < 50) {
                     newVal = 50
+                    renderScaleSlider?.progress = 50
                 }
                 mandelSurfaceView?.superSamplingFactor = newVal.toDouble() / 100.0
             }
@@ -109,6 +110,7 @@ class MainActivity : AppCompatActivity() {
         outState?.putDouble("positionY", this.mandelSurfaceView?.renderer?.positionY?:0.0)
         outState?.putDouble("scale", this.mandelSurfaceView?.renderer?.scale?:75.0)
         outState?.putString("theme", this.mandelSurfaceView?.renderer?.hueTexture.toString())
+        outState?.putDouble("superSamplingFactor", this.mandelSurfaceView?.superSamplingFactor ?: 2.0)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -119,5 +121,6 @@ class MainActivity : AppCompatActivity() {
         this.mandelSurfaceView?.renderer?.positionY = savedInstanceState?.getDouble("positionY")?:0.0
         this.mandelSurfaceView?.renderer?.scale = savedInstanceState?.getDouble("scale")?:75.0
         this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.valueOf(savedInstanceState?.getString("theme")?:"firehue")
+        this.mandelSurfaceView?.superSamplingFactor = savedInstanceState?.getDouble("superSamplingFactor") ?: 2.0
     }
 }

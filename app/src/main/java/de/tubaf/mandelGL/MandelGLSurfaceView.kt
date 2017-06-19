@@ -9,8 +9,8 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 
 /**
-* Created by lorenz on 16.06.17 for de.tubaf.lndw
-*/
+ * Created by lorenz on 16.06.17 for de.tubaf.lndw
+ */
 
 class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceView(context, attrs), ScaleGestureDetector.OnScaleGestureListener, GestureDetector.OnGestureListener {
     private val DENSITY = getContext().resources.displayMetrics.density
@@ -18,8 +18,9 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
     var superSamplingFactor = 2.0
         set(value) {
             if (value in 0.5..3.0) {
-                field = superSamplingFactor
-
+                field = value
+                onSizeChanged(width, height, width, height)
+                requestRender()
             }
         }
 
@@ -48,11 +49,8 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-
-        val contentWidth = (w / DENSITY).toInt()
-        val contentHeight = (h / DENSITY).toInt()
-
-        holder.setFixedSize((contentWidth * this.superSamplingFactor).toInt(), (contentHeight * this.superSamplingFactor).toInt())
+        this.renderer.updateFrame(w, h)
+        holder.setFixedSize((w / DENSITY * this.superSamplingFactor).toInt(), (h / DENSITY * this.superSamplingFactor).toInt())
     }
 
 
@@ -89,15 +87,15 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
         //println("Pinch Center: ${point[0]}, ${point[1]}")
 
         //Convert to Gaussian:
-        val centerX = this.renderer.positionX + (point[0] - 0.5f * this.renderer.frameWidth) / this.renderer.scale
-        val centerY = this.renderer.positionY - (point[1] - 0.5f * this.renderer.frameHeight) / this.renderer.scale
+        val centerX = this.renderer.positionX + (point[0] - 0.5f * width / DENSITY) / this.renderer.scale
+        val centerY = this.renderer.positionY - (point[1] - 0.5f * height / DENSITY) / this.renderer.scale
 
         //Execute the scale:
         this.renderer.scale = this.renderer.scale * unwrappedDetector.scaleFactor.toDouble()
 
         //Move the saved Gaussian back to the center point:
-        this.renderer.positionX = centerX - (point[0] - 0.5f * this.renderer.frameWidth) / this.renderer.scale
-        this.renderer.positionY = centerY + (point[1] - 0.5f * this.renderer.frameHeight) / this.renderer.scale
+        this.renderer.positionX = centerX - (point[0] - 0.5f * width / DENSITY) / this.renderer.scale
+        this.renderer.positionY = centerY + (point[1] - 0.5f * height / DENSITY) / this.renderer.scale
 
         requestRender()
 

@@ -44,8 +44,8 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         field = maxOf(this.minPosition, minOf(value, this.maxPosition))
     }
 
-    internal var frameWidth: Int = 0
-    internal var frameHeight: Int = 0
+    private var frameWidth: Int = 0
+    private var frameHeight: Int = 0
 
     //Limit position and scale:
     private val minPosition: Double = -3.0
@@ -77,6 +77,10 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
     private val glTasks: ArrayList<() -> Unit> = ArrayList()
 
+    fun addGLTask(task: () -> Unit) {
+        this.glTasks.add(task)
+    }
+
     companion object {
         fun checkError(dbgDomain: String, dbgText: String): Unit {
             val error = GLES30.glGetError()
@@ -85,6 +89,11 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
                 Log.d(dbgDomain, dbgText)
             }
         }
+    }
+
+    fun updateFrame(width: Int, height: Int) {
+        this.frameWidth = width
+        this.frameHeight = height
     }
 
     override fun onDrawFrame(p0: GL10?) {
@@ -118,8 +127,6 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(p0: GL10?, width: Int, height: Int) {
-        this.frameWidth = width
-        this.frameHeight = height
         GLES30.glViewport(0, 0, width, height)
         MandelGLRenderer.checkError("Setting Viewport", "Failed to specify the viewport")
     }
