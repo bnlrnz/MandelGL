@@ -35,14 +35,14 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
     private var hueTextures = HashMap<HueTexture, Int>(HueTexture.values().size)
 
     var positionX: Double = 0.0
-    set(value) {
-        field = maxOf(this.minPosition, minOf(value, this.maxPosition))
-    }
+        set(value) {
+            field = maxOf(this.minPosition, minOf(value, this.maxPosition))
+        }
 
     var positionY: Double = 0.0
-    set(value) {
-        field = maxOf(this.minPosition, minOf(value, this.maxPosition))
-    }
+        set(value) {
+            field = maxOf(this.minPosition, minOf(value, this.maxPosition))
+        }
 
     private var frameWidth: Int = 0
     private var frameHeight: Int = 0
@@ -55,25 +55,25 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
     private val maxScale: Double = 100000000.0
 
     var scale = minScale
-    set(value) {
-        field = maxOf(this.minScale, minOf(value, this.maxScale))
-    }
+        set(value) {
+            field = maxOf(this.minScale, minOf(value, this.maxScale))
+        }
 
     var iterations = 50
-    set(value) {
-        field = value
-    }
+        set(value) {
+            field = value
+        }
 
-    private val clearColor = floatArrayOf(0.0f,0.0f,0.0f,1.0f)
+    private val clearColor = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
 
     var hueTexture: HueTexture = HueTexture.firehue
-    set(value) {
-        field = value
+        set(value) {
+            field = value
 
-        glTasks.add {
-            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, this.hueTextures[value]!!)
+            glTasks.add {
+                GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, this.hueTextures[value]!!)
+            }
         }
-    }
 
     private val glTasks: ArrayList<() -> Unit> = ArrayList()
 
@@ -102,22 +102,22 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         this.glTasks.clear()
 
         GLES30.glUniform2f(this.gaussianPositionUniform, this.positionX.toFloat(), this.positionY.toFloat())
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to provide uniform (gaussianPosition)")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to provide uniform (gaussianPosition)")
 
         GLES30.glUniform2f(this.gaussianHalfFrameUniform, (0.5 * this.frameWidth.toDouble() / this.scale).toFloat(), (0.5 * this.frameHeight.toDouble() / this.scale).toFloat())
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to provide uniform (gaussianPosition)")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to provide uniform (gaussianPosition)")
 
         GLES30.glUniform1ui(this.iterationsUniform, this.iterations)
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to provide uniform (iterations)")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to provide uniform (iterations)")
 
         //Clear the renderbuffer with the given clear color.
         //Second parameter means: drawbuffers[0] which is the renderbuffer.
         GLES30.glClearBufferfv(GLES30.GL_COLOR, 0, FloatBuffer.wrap(this.clearColor))
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to clear renderbuffer")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to clear renderbuffer")
 
         //Draw a full-screen-quad:
         GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP, 0, 4)
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to draw")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to draw")
 
         //Log.d("Render at", "" + this.positionX + ", " + this.positionY + " with scale: " + this.scale)
     }
@@ -186,7 +186,7 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         vertexDataBuffer.position(0)
 
         //Upload it:
-        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, 8*4, vertexDataBuffer, GLES30.GL_STATIC_DRAW)
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, 8 * 4, vertexDataBuffer, GLES30.GL_STATIC_DRAW)
         MandelGLRenderer.checkError(dbgDomain, "Failed to buffer vertex data")
 
         //Enable the array:
@@ -344,7 +344,7 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         val dbgDomain = "Creating texture " + hue.toString()
 
         //Read the bytes:
-        val rawText = this.context.assets.open(hue.name+".rgba")
+        val rawText = this.context.assets.open(hue.name + ".rgba")
         val pixelData = rawText.buffered().readBytes()
 
         //Calculate the pixels count:
@@ -356,33 +356,33 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         val textureHandle = IntArray(1)
 
         GLES30.glGenTextures(1, textureHandle, 0)
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to generate texture handle")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to generate texture handle")
 
         //Bind our texture:
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureHandle[0])
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to bind texture")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to bind texture")
 
         //Set wrapping mode:
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE)
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to set wrapping for s")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to set wrapping for s")
 
         glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE)
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to set wrapping for t")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to set wrapping for t")
 
         //Provide the bytes:
         GLES30.glTexStorage2D(GLES30.GL_TEXTURE_2D, 1, GLES30.GL_RGBA8, pixelsCount, 1)
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to specify texture storage (2D)")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to specify texture storage (2D)")
 
         GLES30.glTexSubImage2D(GLES30.GL_TEXTURE_2D, 0, 0, 0, pixelsCount, 1, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, ByteBuffer.wrap(pixelData))
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to push texture data (2D)")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to push texture data (2D)")
 
         //Set min filter:
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST)
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to set texture minification filter")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to set texture minification filter")
 
         //Set mag filter:
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST)
-        MandelGLRenderer.checkError( dbgDomain,  "Failed to set texture magnification filter")
+        MandelGLRenderer.checkError(dbgDomain, "Failed to set texture magnification filter")
 
         //Return the texture handle:
         return textureHandle[0]

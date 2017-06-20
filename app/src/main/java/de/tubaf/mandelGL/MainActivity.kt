@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         this.iterationSlider = findViewById(R.id.iterationSlider) as SeekBar?
 
         this.iterationSlider?.max = 200
-        this.iterationSlider?.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+        this.iterationSlider?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
             }
 
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         //setup theme chooser
         this.themeChooser = findViewById(R.id.radioGroup) as RadioGroup?
         this.themeChooser?.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId){
+            when (checkedId) {
                 R.id.radioTrippy -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.psychue
                 R.id.radioAsh -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.ashhue
                 R.id.radioFire -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.firehue
@@ -104,9 +104,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(!settingsHidden){
+        if (!settingsHidden) {
             this.hideUnhideButton?.performClick()
-        }else{
+        } else {
             super.onBackPressed()
         }
     }
@@ -115,21 +115,22 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         TransitionManager.beginDelayedTransition(this.constraintLayout)
-        if(settingsHidden){
+        if (settingsHidden) {
             this.hideUnhideButton?.text = getString(R.string.settingsButtonText)
             this.hideSettingsConstraintSet.applyTo(this.constraintLayout)
-        }else{
+        } else {
             this.hideUnhideButton?.text = getString(R.string.hideButtonText)
             this.showSettingsConstraintSet.applyTo(this.constraintLayout)
         }
     }
+
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
 
         //save rendering state
-        outState?.putDouble("positionX", this.mandelSurfaceView?.renderer?.positionX?:0.0)
-        outState?.putDouble("positionY", this.mandelSurfaceView?.renderer?.positionY?:0.0)
-        outState?.putDouble("scale", this.mandelSurfaceView?.renderer?.scale?:75.0)
+        outState?.putDouble("positionX", this.mandelSurfaceView?.renderer?.positionX ?: 0.0)
+        outState?.putDouble("positionY", this.mandelSurfaceView?.renderer?.positionY ?: 0.0)
+        outState?.putDouble("scale", this.mandelSurfaceView?.renderer?.scale ?: 75.0)
         outState?.putString("theme", this.mandelSurfaceView?.renderer?.hueTexture.toString())
         outState?.putDouble("superSamplingFactor", this.mandelSurfaceView?.superSamplingFactor ?: 2.0)
         outState?.putBoolean("settingsHidden", this.settingsHidden)
@@ -139,10 +140,10 @@ class MainActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
 
         //restore rendering state
-        this.mandelSurfaceView?.renderer?.positionX = savedInstanceState?.getDouble("positionX")?:0.0
-        this.mandelSurfaceView?.renderer?.positionY = savedInstanceState?.getDouble("positionY")?:0.0
-        this.mandelSurfaceView?.renderer?.scale = savedInstanceState?.getDouble("scale")?:75.0
-        this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.valueOf(savedInstanceState?.getString("theme")?:"firehue")
+        this.mandelSurfaceView?.renderer?.positionX = savedInstanceState?.getDouble("positionX") ?: 0.0
+        this.mandelSurfaceView?.renderer?.positionY = savedInstanceState?.getDouble("positionY") ?: 0.0
+        this.mandelSurfaceView?.renderer?.scale = savedInstanceState?.getDouble("scale") ?: 75.0
+        this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.valueOf(savedInstanceState?.getString("theme") ?: "firehue")
         this.mandelSurfaceView?.superSamplingFactor = savedInstanceState?.getDouble("superSamplingFactor") ?: 2.0
         this.settingsHidden = savedInstanceState?.getBoolean("settingsHidden") ?: false
     }
