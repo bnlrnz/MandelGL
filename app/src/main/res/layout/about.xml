@@ -16,7 +16,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:text="MandelGL"
+            android:text="@string/app_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -29,11 +29,12 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:text="Freiberg University of Mining and Technology\n\nComputer Science Institute Operating Systems and Communication Technology\nBernhard-von-Cotta-Straße 2\n09599 Freiberg\n\nProf. Dr. Konrad Froitzheim\nRichard Weinhold, B.Sc.\nJonas Treumer, M.Sc.\nBen Lorenz, M.Sc.\n\nThis project has been developed in the context of the lecture 'Multimedia' in summer 2017. The source code has been published under the Apache License 2.0."
+            android:text="@string/legalText"
             android:textAlignment="center"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            app:layout_constraintTop_toBottomOf="@+id/textView4"
+            app:layout_constraintHorizontal_bias="0.0" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -42,11 +43,12 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5"
-            app:srcCompat="@drawable/ifi" />
+            app:srcCompat="@drawable/ifi"
+            android:contentDescription="@string/ifiLogoDescription" />
 
         <ImageView
             android:id="@+id/imageView2"
@@ -62,6 +64,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/tubaf" />
+            app:srcCompat="@drawable/tubaf"
+            android:contentDescription="@string/tubafLogoDescription" />
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

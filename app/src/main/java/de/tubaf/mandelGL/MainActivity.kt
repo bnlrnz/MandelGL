@@ -17,8 +17,11 @@ class MainActivity : AppCompatActivity() {
     private var constraintLayout: ConstraintLayout? = null
     private val hideSettingsConstraintSet: ConstraintSet = ConstraintSet()
     private val showSettingsConstraintSet: ConstraintSet = ConstraintSet() // default
-    private var settingsHidden = false
+    private var settingsHidden = true
     private var hideUnhideButton: Button? = null
+
+    private var infoDialogPresent = false
+    private var aboutDialogPresent = false
 
     private var iterationSlider: SeekBar? = null
     private var renderScaleSlider: SeekBar? = null
@@ -55,10 +58,12 @@ class MainActivity : AppCompatActivity() {
         this.renderScaleSlider?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 var newVal = p1
+                //limit the min value of the renderscale slider
                 if (newVal < 50) {
                     newVal = 50
                     renderScaleSlider?.progress = 50
                 }
+                //pass the new value to the supersampling property
                 mandelSurfaceView?.superSamplingFactor = newVal.toDouble() / 100.0
             }
 
@@ -107,28 +112,19 @@ class MainActivity : AppCompatActivity() {
 
         //button interaction
         findViewById(R.id.aboutButton).setOnClickListener {
-            val dialog: Dialog = Dialog(this)
-            dialog.setContentView(R.layout.about)
-            dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-            dialog.show()
+            this.aboutDialogPresent = true
+            showAboutDialog()
         }
 
         findViewById(R.id.infoButton).setOnClickListener {
-            val dialog: Dialog = Dialog(this)
-            dialog.setContentView(R.layout.info)
-            val shaderText = dialog.findViewById(R.id.shaderText) as TextView?
-
-            //Get a null-terminated raw char pointer to the source:
-            val rawText = this.assets.open("fragmentshader.glsl")
-            val shaderString = rawText.bufferedReader().use { it.readText() }
-            shaderText?.text = shaderString
-
-            dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-            dialog.show()
+            this.infoDialogPresent = true
+            showInfoDialog()
         }
     }
 
     override fun onBackPressed() {
+        //if settings are visible, back press will hide them
+        //if not, app gets closed (default behaviour)
         if (!settingsHidden) {
             this.hideUnhideButton?.performClick()
         } else {
@@ -136,9 +132,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showInfoDialog() {
+        val dialog: Dialog = Dialog(this)
+        dialog.setContentView(R.layout.info)
+        val shaderText = dialog.findViewById(R.id.shaderText) as TextView?
+
+        //get shader source
+        val rawText = this.assets.open("fragmentshader.glsl")
+        val shaderString = rawText.bufferedReader().use { it.readText() }
+        shaderText?.text = shaderString
+
+        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        dialog.show()
+        dialog.setOnDismissListener {
+            this.infoDialogPresent = false
+        }
+    }
+
+    private fun showAboutDialog() {
+        val dialog: Dialog = Dialog(this)
+        dialog.setContentView(R.layout.about)
+        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        dialog.show()
+        dialog.setOnDismissListener {
+            this.aboutDialogPresent = false
+        }
+    }
+
     override fun onResume() {
         super.onResume()
 
+        //resume with or withour visible settings?
         TransitionManager.beginDelayedTransition(this.constraintLayout)
         if (settingsHidden) {
             this.hideUnhideButton?.text = getString(R.string.settingsButtonText)
@@ -146,6 +170,15 @@ class MainActivity : AppCompatActivity() {
         } else {
             this.hideUnhideButton?.text = getString(R.string.hideButtonText)
             this.showSettingsConstraintSet.applyTo(this.constraintLayout)
+        }
+
+        //resume with present dialog?
+        if (this.infoDialogPresent) {
+            showInfoDialog()
+        }
+
+        if (this.aboutDialogPresent) {
+            showAboutDialog()
         }
     }
 
@@ -158,7 +191,11 @@ class MainActivity : AppCompatActivity() {
         outState?.putDouble("scale", this.mandelSurfaceView?.renderer?.scale ?: 75.0)
         outState?.putString("theme", this.mandelSurfaceView?.renderer?.hueTexture.toString())
         outState?.putDouble("superSamplingFactor", this.mandelSurfaceView?.superSamplingFactor ?: 2.0)
+
+        //save gui state
         outState?.putBoolean("settingsHidden", this.settingsHidden)
+        outState?.putBoolean("infoDialogPresent", this.infoDialogPresent)
+        outState?.putBoolean("aboutDialogPresent", this.aboutDialogPresent)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -170,6 +207,10 @@ class MainActivity : AppCompatActivity() {
         this.mandelSurfaceView?.renderer?.scale = savedInstanceState?.getDouble("scale") ?: 75.0
         this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.valueOf(savedInstanceState?.getString("theme") ?: "firehue")
         this.mandelSurfaceView?.superSamplingFactor = savedInstanceState?.getDouble("superSamplingFactor") ?: 2.0
+
+        //restore gui state
         this.settingsHidden = savedInstanceState?.getBoolean("settingsHidden") ?: false
+        this.infoDialogPresent = savedInstanceState?.getBoolean("infoDialogPresent") ?: false
+        this.aboutDialogPresent = savedInstanceState?.getBoolean("aboutDialogPresent") ?: false
     }
 }

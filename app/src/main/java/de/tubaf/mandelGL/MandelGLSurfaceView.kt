@@ -30,7 +30,7 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
     private var gestureDetector: GestureDetectorCompat? = null
 
     init {
-        //GLES 3
+        //GLES 3 is supported by Android 4.3+
         setEGLContextClientVersion(3)
 
         setRenderer(this.renderer)
