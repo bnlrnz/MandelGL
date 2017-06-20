@@ -1,13 +1,16 @@
 package de.tubaf.mandelGL
 
+import android.app.Dialog
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
 import android.support.v7.app.AppCompatActivity
 import android.transition.TransitionManager
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.SeekBar
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
 
@@ -100,6 +103,28 @@ class MainActivity : AppCompatActivity() {
                 hideUnhideButton?.text = getString(R.string.settingsButtonText)
                 this.settingsHidden = true
             }
+        }
+
+        //button interaction
+        findViewById(R.id.aboutButton).setOnClickListener {
+            val dialog: Dialog = Dialog(this)
+            dialog.setContentView(R.layout.about)
+            dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            dialog.show()
+        }
+
+        findViewById(R.id.infoButton).setOnClickListener {
+            val dialog: Dialog = Dialog(this)
+            dialog.setContentView(R.layout.info)
+            val shaderText = dialog.findViewById(R.id.shaderText) as TextView?
+
+            //Get a null-terminated raw char pointer to the source:
+            val rawText = this.assets.open("fragmentshader.glsl")
+            val shaderString = rawText.bufferedReader().use { it.readText() }
+            shaderText?.text = shaderString
+
+            dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            dialog.show()
         }
     }
 
