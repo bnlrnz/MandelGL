@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">MandelGL</string>
+    <string name="hideButtonText">Hide</string>
+    <string name="settingsButtonText">Settings</string>
+    <string name="colorThemeText">Theme</string>
+    <string name="infoButtonText">Info</string>
+    <string name="renderScaleText">Render Scale</string>
+    <string name="aboutButtonText">About</string>
+    <string name="iterationsText">Iterations</string>
+    <string name="shareButtonText">Share</string>
+    <string name="trippyThemeText">Trippy</string>
+    <string name="ashThemeText">Ash</string>
+    <string name="iceThemeText">Ice</string>
+    <string name="fireThemeText">Fire</string>
 </resources>

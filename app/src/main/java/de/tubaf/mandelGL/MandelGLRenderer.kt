@@ -71,15 +71,11 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         field = value
 
         glTasks.add {
-            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, this.hueTextures.get(value)!!)
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, this.hueTextures[value]!!)
         }
     }
 
     private val glTasks: ArrayList<() -> Unit> = ArrayList()
-
-    fun addGLTask(task: () -> Unit) {
-        this.glTasks.add(task)
-    }
 
     companion object {
         fun checkError(dbgDomain: String, dbgText: String): Unit {

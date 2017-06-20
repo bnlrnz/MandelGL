@@ -79,7 +79,7 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
     }
 
     override fun onScale(detector: ScaleGestureDetector?): Boolean {
-        val unwrappedDetector: ScaleGestureDetector = detector ?: return false;
+        val unwrappedDetector: ScaleGestureDetector = detector ?: return false
 
         //Get the pinch center:
         val point = floatArrayOf(unwrappedDetector.focusX / this.DENSITY, unwrappedDetector.focusY / this.DENSITY)

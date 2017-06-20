@@ -92,14 +92,22 @@ class MainActivity : AppCompatActivity() {
             if (settingsHidden) {
                 //show settings
                 showSettingsConstraintSet.applyTo(this.constraintLayout)
-                hideUnhideButton?.text = "Hide"
+                hideUnhideButton?.text = getString(R.string.hideButtonText)
                 this.settingsHidden = false
             } else {
                 //hide settings
                 hideSettingsConstraintSet.applyTo(this.constraintLayout)
-                hideUnhideButton?.text = "Settings"
+                hideUnhideButton?.text = getString(R.string.settingsButtonText)
                 this.settingsHidden = true
             }
+        }
+    }
+
+    override fun onBackPressed() {
+        if(!settingsHidden){
+            this.hideUnhideButton?.performClick()
+        }else{
+            super.onBackPressed()
         }
     }
 
@@ -108,10 +116,10 @@ class MainActivity : AppCompatActivity() {
 
         TransitionManager.beginDelayedTransition(this.constraintLayout)
         if(settingsHidden){
-            this.hideUnhideButton?.text = "Settings"
+            this.hideUnhideButton?.text = getString(R.string.settingsButtonText)
             this.hideSettingsConstraintSet.applyTo(this.constraintLayout)
         }else{
-            this.hideUnhideButton?.text = "Hide"
+            this.hideUnhideButton?.text = getString(R.string.hideButtonText)
             this.showSettingsConstraintSet.applyTo(this.constraintLayout)
         }
     }
