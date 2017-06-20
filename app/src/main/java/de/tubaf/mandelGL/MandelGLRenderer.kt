@@ -12,6 +12,7 @@ import java.nio.FloatBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
+
 /**
  * Created by lorenz on 16.06.17 for de.tubaf.lndw
  */
@@ -47,6 +48,9 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
     private var frameWidth: Int = 0
     private var frameHeight: Int = 0
 
+    private var renderBufferWidth: Int = 0
+    private var renderBufferHeight: Int = 0
+
     //Limit position and scale:
     private val minPosition: Double = -3.0
     private val maxPosition: Double = 3.0
@@ -75,7 +79,7 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
             }
         }
 
-    private val glTasks: ArrayList<() -> Unit> = ArrayList()
+    val glTasks: ArrayList<() -> Unit> = ArrayList()
 
     companion object {
         fun checkError(dbgDomain: String, dbgText: String): Unit {
@@ -123,6 +127,9 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(p0: GL10?, width: Int, height: Int) {
+        this.renderBufferWidth = width
+        this.renderBufferHeight = height
+
         GLES30.glViewport(0, 0, width, height)
         MandelGLRenderer.checkError("Setting Viewport", "Failed to specify the viewport")
     }

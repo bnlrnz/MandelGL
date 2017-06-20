@@ -1,6 +1,8 @@
 package de.tubaf.mandelGL
 
 import android.app.Dialog
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
@@ -11,6 +13,12 @@ import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.File.separator
+import java.io.FileOutputStream
+import java.io.IOException
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -120,6 +128,41 @@ class MainActivity : AppCompatActivity() {
             this.infoDialogPresent = true
             showInfoDialog()
         }
+
+        //share feature
+        findViewById(R.id.shareButton).setOnClickListener {
+            getCurrentImage()
+        }
+    }
+
+    fun getCurrentImage() {
+        this.mandelSurfaceView?.renderer?.glTasks?.add {
+            val bitmap = this.mandelSurfaceView?.createBitmapFromGLSurface(0, 0, this.mandelSurfaceView?.width ?: 1, this.mandelSurfaceView?.height ?: 1)
+
+            val stream = ByteArrayOutputStream()
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+            val byteArray = stream.toByteArray()
+
+            val file = File(cacheDir?.absolutePath + separator + "temporary_file.jpg")
+            try {
+                file.createNewFile()
+                val fo = FileOutputStream(file)
+                fo.write(byteArray)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+
+            runOnUiThread {
+                val shareIntent = Intent()
+                shareIntent.action = Intent.ACTION_SEND
+                shareIntent.putExtra(Intent.EXTRA_STREAM, file.toURI())
+                shareIntent.type = "image/jpeg"
+                startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.send_to)))
+            }
+        }
+
+        //we need to trigger render to execute gl call
+        this.mandelSurfaceView?.requestRender()
     }
 
     override fun onBackPressed() {

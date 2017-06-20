@@ -1,12 +1,17 @@
 package de.tubaf.mandelGL
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.opengl.GLES30
+import android.opengl.GLException
 import android.opengl.GLSurfaceView
 import android.support.v4.view.GestureDetectorCompat
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
+import java.nio.IntBuffer
+import javax.microedition.khronos.opengles.GL10
 
 /**
  * Created by lorenz on 16.06.17 for de.tubaf.lndw
@@ -53,6 +58,33 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
         holder.setFixedSize((w / DENSITY * this.superSamplingFactor).toInt(), (h / DENSITY * this.superSamplingFactor).toInt())
     }
 
+    internal fun createBitmapFromGLSurface(x: Int, y: Int, w: Int, h: Int): Bitmap? {
+        val bitmapBuffer = IntArray(w * h)
+        val bitmapSource = IntArray(w * h)
+        val intBuffer = IntBuffer.wrap(bitmapBuffer)
+        intBuffer.position(0)
+
+        try {
+            GLES30.glReadPixels(x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer)
+            var offset1: Int
+            var offset2: Int
+            for (i in 0..h - 1) {
+                offset1 = i * w
+                offset2 = (h - i - 1) * w
+                for (j in 0..w - 1) {
+                    val texturePixel = bitmapBuffer[offset1 + j]
+                    val blue = texturePixel shr 16 and 0xff
+                    val red = texturePixel shl 16 and 0x00ff0000
+                    val pixel = texturePixel and 0xff00ff00.toInt() or red or blue
+                    bitmapSource[offset2 + j] = pixel
+                }
+            }
+        } catch (e: GLException) {
+            return null
+        }
+
+        return Bitmap.createBitmap(bitmapSource, w, h, Bitmap.Config.ARGB_8888)
+    }
 
     //Handle touch events
     override fun onTouchEvent(event: MotionEvent?): Boolean {

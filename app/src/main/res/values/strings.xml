@@ -31,5 +31,6 @@
     <string name="formula2Description">mathematically formulated condition for a complex number to be part of the mandelbrot set</string>
     <string name="ifiLogoDescription">Logo of Institut für Informatik</string>
     <string name="tubafLogoDescription">Logo of the TU Bergakademie Freiberg</string>
+    <string name="send_to">Send current view as image</string>
 
 </resources>
