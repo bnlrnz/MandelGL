@@ -12,4 +12,15 @@
     <string name="ashThemeText">Ash</string>
     <string name="iceThemeText">Ice</string>
     <string name="fireThemeText">Fire</string>
+
+    <string name="cclink">"<a href="http://www.creativecommons.org" >CC BY 2.0</a>"</string>
+    <string name="benoitTitle">Benoit Mandelbrot</string>
+    <string name="benoitText">The Mandelbrot set is a set of points located in the Gaussian plane. It is named after the Polish mathematician Benoit B. Mandelbrot (1924 – 2010).</string>
+    <string name="benoitImageCaption">Benoit B. Mandelbrot (TED conference, 2010) Picture by Steve Jurvetson</string>
+    <string name="benoitText2">Mandelbrot is, among other accomplishments, well-known for his pioneering contributions to the field of geometry. The term \'fractal\' describing self-similar structures dates back to him.</string>
+    <string name="mathTitle">Mathematical Details</string>
+    <string name="mathText1">To properly define the Mandelbrot set, one first has to examine the following family of complex recursive sequences:</string>
+    <string name="mathText2">For every complex number c, the corresponding sequence is either bounded and therefore never leaves a certain circle around the origin of the Gaussian plane or it escapes to infinity. The numbers linked to limited sequences form the Mandelbrot set.\n\nTo evaluate the membership of a specific complex number, we need a tractable criterion to decide whether the sequence is limited or not. It can actually be proven that crossing the border of the circle with radius 2 is sufficient to escape. Hence, all sequence steps of Mandelbrot members stay inside this circle. In mathematical terms, we obtain:</string>
+    <string name="implementationTitle">Implementation</string>
+    <string name="implementationText">The implementation of an OpenGL-based Mandelbrot renderer can be accomplished by assigning a complex number to every pixel on the screen and afterwards evaluating the given criterion. If the corresponding sequence does not surpass the circle of radius 2 in a fixed number of iteration steps, the pixel is considered to belong to the Mandelbrot set. Increasing the number of both pixels and iterations leads to improved quality and accuracy, but also slows down the rendering process.\n\nThe Mandelbrot set itself is a binary concept: A point is either part of it or lies on the outside. A more colorful hue can be accomplished by taking the ieration count necessary to surpass the limit of 2 and using it as an offset into a color palette. Every theme in this app possesses such a palette.\n\nEverything comes together in the form of an OpenGL fragment shader:</string>
 </resources>
