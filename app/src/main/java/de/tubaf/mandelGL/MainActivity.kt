@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private val hideSettingsConstraintSet: ConstraintSet = ConstraintSet()
     private val showSettingsConstraintSet: ConstraintSet = ConstraintSet() // default
     private var settingsHidden = false
+    private var hideUnhideButton: Button? = null
 
     private var iterationSlider: SeekBar? = null
     private var renderScaleSlider: SeekBar? = null
@@ -67,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
         //setup theme chooser
         this.themeChooser = findViewById(R.id.radioGroup) as RadioGroup?
-        this.themeChooser?.setOnCheckedChangeListener { group, checkedId ->
+        this.themeChooser?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId){
                 R.id.radioTrippy -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.psychue
                 R.id.radioAsh -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.ashhue
@@ -78,30 +79,42 @@ class MainActivity : AppCompatActivity() {
         }
 
         //hide/show settings, setup constraint transitions
-        val hideUnhideButton = findViewById(R.id.hideUnhideButton) as Button
+        this.hideUnhideButton = findViewById(R.id.hideUnhideButton) as Button
 
         this.constraintLayout = findViewById(R.id.constraintLayout) as ConstraintLayout?
         this.showSettingsConstraintSet.clone(this.constraintLayout)
         this.hideSettingsConstraintSet.clone(this.constraintLayout)
-        this.hideSettingsConstraintSet.clear(R.id.settingsLayout, ConstraintSet.TOP)
-        this.hideSettingsConstraintSet.connect(R.id.settingsLayout, ConstraintSet.BOTTOM, R.id.constraintLayout, ConstraintSet.TOP, 0)
+        this.hideSettingsConstraintSet.clear(R.id.settingsLayout, ConstraintSet.BOTTOM)
+        this.hideSettingsConstraintSet.connect(R.id.settingsLayout, ConstraintSet.TOP, R.id.constraintLayout, ConstraintSet.BOTTOM, 0)
 
-        hideUnhideButton.setOnClickListener {
+        this.hideUnhideButton?.setOnClickListener {
             TransitionManager.beginDelayedTransition(this.constraintLayout)
-            if (this.settingsHidden) {
+            if (settingsHidden) {
                 //show settings
-                this.showSettingsConstraintSet.applyTo(this.constraintLayout)
-                hideUnhideButton.text = "Hide"
+                showSettingsConstraintSet.applyTo(this.constraintLayout)
+                hideUnhideButton?.text = "Hide"
                 this.settingsHidden = false
             } else {
                 //hide settings
-                this.hideSettingsConstraintSet.applyTo(this.constraintLayout)
-                hideUnhideButton.text = "Settings"
+                hideSettingsConstraintSet.applyTo(this.constraintLayout)
+                hideUnhideButton?.text = "Settings"
                 this.settingsHidden = true
             }
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        TransitionManager.beginDelayedTransition(this.constraintLayout)
+        if(settingsHidden){
+            this.hideUnhideButton?.text = "Settings"
+            this.hideSettingsConstraintSet.applyTo(this.constraintLayout)
+        }else{
+            this.hideUnhideButton?.text = "Hide"
+            this.showSettingsConstraintSet.applyTo(this.constraintLayout)
+        }
+    }
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
 
@@ -111,6 +124,7 @@ class MainActivity : AppCompatActivity() {
         outState?.putDouble("scale", this.mandelSurfaceView?.renderer?.scale?:75.0)
         outState?.putString("theme", this.mandelSurfaceView?.renderer?.hueTexture.toString())
         outState?.putDouble("superSamplingFactor", this.mandelSurfaceView?.superSamplingFactor ?: 2.0)
+        outState?.putBoolean("settingsHidden", this.settingsHidden)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -122,5 +136,6 @@ class MainActivity : AppCompatActivity() {
         this.mandelSurfaceView?.renderer?.scale = savedInstanceState?.getDouble("scale")?:75.0
         this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.valueOf(savedInstanceState?.getString("theme")?:"firehue")
         this.mandelSurfaceView?.superSamplingFactor = savedInstanceState?.getDouble("superSamplingFactor") ?: 2.0
+        this.settingsHidden = savedInstanceState?.getBoolean("settingsHidden") ?: false
     }
 }
