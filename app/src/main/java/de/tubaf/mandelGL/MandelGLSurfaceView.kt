@@ -2,16 +2,19 @@ package de.tubaf.mandelGL
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.opengl.GLES30
-import android.opengl.GLException
+import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.support.v4.view.GestureDetectorCompat
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
-import java.nio.IntBuffer
-import javax.microedition.khronos.opengles.GL10
+import java.io.BufferedOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+
 
 /**
  * Created by lorenz on 16.06.17 for de.tubaf.lndw
@@ -58,32 +61,40 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
         holder.setFixedSize((w / DENSITY * this.superSamplingFactor).toInt(), (h / DENSITY * this.superSamplingFactor).toInt())
     }
 
-    internal fun createBitmapFromGLSurface(x: Int, y: Int, w: Int, h: Int): Bitmap? {
-        val bitmapBuffer = IntArray(w * h)
-        val bitmapSource = IntArray(w * h)
-        val intBuffer = IntBuffer.wrap(bitmapBuffer)
-        intBuffer.position(0)
+    fun saveFrame(file: File) {
 
+        // glReadPixels fills in a "direct" ByteBuffer with what is essentially big-endian RGBA
+        // data (i.e. a byte of red, followed by a byte of green...).  While the Bitmap
+        // constructor that takes an int[] wants little-endian ARGB (blue/red swapped), the
+        // Bitmap "copy pixels" method wants the same format GL provides.
+        //
+        // Ideally we'd have some way to re-use the ByteBuffer, especially if we're calling
+        // here often.
+        //
+        // Making this even more interesting is the upside-down nature of GL, which means
+        // our output will look upside down relative to what appears on screen if the
+        // typical GL conventions are used.
+
+        val filename = file.toString()
+
+        val width = width
+        val height = height
+        val buf = ByteBuffer.allocateDirect(width * height * 4)
+        buf.order(ByteOrder.LITTLE_ENDIAN)
+        GLES20.glReadPixels(0, 0, width, height,
+                GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf)
+        buf.rewind()
+
+        var bos: BufferedOutputStream? = null
         try {
-            GLES30.glReadPixels(x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, intBuffer)
-            var offset1: Int
-            var offset2: Int
-            for (i in 0..h - 1) {
-                offset1 = i * w
-                offset2 = (h - i - 1) * w
-                for (j in 0..w - 1) {
-                    val texturePixel = bitmapBuffer[offset1 + j]
-                    val blue = texturePixel shr 16 and 0xff
-                    val red = texturePixel shl 16 and 0x00ff0000
-                    val pixel = texturePixel and 0xff00ff00.toInt() or red or blue
-                    bitmapSource[offset2 + j] = pixel
-                }
-            }
-        } catch (e: GLException) {
-            return null
+            bos = BufferedOutputStream(FileOutputStream(filename))
+            val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            bmp.copyPixelsFromBuffer(buf)
+            bmp.compress(Bitmap.CompressFormat.JPEG, 90, bos)
+            bmp.recycle()
+        } finally {
+            if (bos != null) bos.close()
         }
-
-        return Bitmap.createBitmap(bitmapSource, w, h, Bitmap.Config.ARGB_8888)
     }
 
     //Handle touch events

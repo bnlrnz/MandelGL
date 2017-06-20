@@ -2,10 +2,10 @@ package de.tubaf.mandelGL
 
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.transition.TransitionManager
 import android.view.WindowManager
@@ -13,10 +13,8 @@ import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.File.separator
-import java.io.FileOutputStream
 import java.io.IOException
 
 
@@ -137,25 +135,22 @@ class MainActivity : AppCompatActivity() {
 
     fun getCurrentImage() {
         this.mandelSurfaceView?.renderer?.glTasks?.add {
-            val bitmap = this.mandelSurfaceView?.createBitmapFromGLSurface(0, 0, this.mandelSurfaceView?.width ?: 1, this.mandelSurfaceView?.height ?: 1)
-
-            val stream = ByteArrayOutputStream()
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 90, stream)
-            val byteArray = stream.toByteArray()
-
-            val file = File(cacheDir?.absolutePath + separator + "temporary_file.jpg")
+            val file = File(cacheDir?.absolutePath + separator + "temporary_file.jpeg")
             try {
                 file.createNewFile()
-                val fo = FileOutputStream(file)
-                fo.write(byteArray)
+                this.mandelSurfaceView?.saveFrame(file)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
 
+            val contentUri = FileProvider.getUriForFile(this, "de.tubaf.mandelGL.fileprovider", file)
+
             runOnUiThread {
                 val shareIntent = Intent()
                 shareIntent.action = Intent.ACTION_SEND
-                shareIntent.putExtra(Intent.EXTRA_STREAM, file.toURI())
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
+                shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));
+                shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
                 shareIntent.type = "image/jpeg"
                 startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.send_to)))
             }
