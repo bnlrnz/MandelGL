@@ -13,7 +13,7 @@
     <string name="iceThemeText">Ice</string>
     <string name="fireThemeText">Fire</string>
 
-    <string name="cclink">"<a href="http://www.creativecommons.org" >CC BY 2.0</a>"</string>
+    <string name="cclink"><a href="http://www.creativecommons.org">CC BY 2.0</a></string>
     <string name="benoitTitle">Benoit Mandelbrot</string>
     <string name="benoitText">The Mandelbrot set is a set of points located in the Gaussian plane. It is named after the Polish mathematician Benoit B. Mandelbrot (1924 – 2010).</string>
     <string name="benoitImageCaption">Benoit B. Mandelbrot (TED conference, 2010)\nPicture by Steve Jurvetson</string>
@@ -25,6 +25,6 @@
     <string name="implementationText">The implementation of an OpenGL-based Mandelbrot renderer can be accomplished by assigning a complex number to every pixel on the screen and afterwards evaluating the given criterion. If the corresponding sequence does not surpass the circle of radius 2 in a fixed number of iteration steps, the pixel is considered to belong to the Mandelbrot set. Increasing the number of both pixels and iterations leads to improved quality and accuracy, but also slows down the rendering process.\n\nThe Mandelbrot set itself is a binary concept: A point is either part of it or lies on the outside. A more colorful hue can be accomplished by taking the ieration count necessary to surpass the limit of 2 and using it as an offset into a color palette. Every theme in this app possesses such a palette.\n\nEverything comes together in the form of an OpenGL fragment shader:</string>
     <string name="contributionTitle">Contribution</string>
     <string name="contributionText">Do you have any idea how to make this renderer better / faster / more visually appealing? Or just want to take a look at the details? No problem, you are welcome :)</string>
-    <string name="contribLink">"<a href="http://www.ricwein.com">Get the source code!</a>"</string>
+    <string name="contribLink"><a href="http://www.ricwein.com">Get the source code!</a></string>
 
 </resources>
