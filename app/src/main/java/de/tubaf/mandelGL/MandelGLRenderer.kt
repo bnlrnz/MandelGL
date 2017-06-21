@@ -140,7 +140,7 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         initializeShaders()
         initializeTextures()
 
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, this.hueTextures.get(this.hueTexture)!!)
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, this.hueTextures[this.hueTexture]!!)
 
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
     }

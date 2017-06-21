@@ -205,7 +205,7 @@ class MainActivity : AppCompatActivity() {
         sourceLink?.isClickable = true
         sourceLink?.movementMethod = LinkMovementMethod.getInstance()
 
-        this.infoDialog?.getWindow()?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        this.infoDialog?.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
         this.infoDialog?.show()
         this.infoDialog?.setOnDismissListener {
             this.infoDialogPresent = false
@@ -221,7 +221,7 @@ class MainActivity : AppCompatActivity() {
 
         this.aboutDialog = Dialog(this)
         aboutDialog?.setContentView(R.layout.about)
-        aboutDialog?.getWindow()?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        aboutDialog?.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
         aboutDialog?.show()
         aboutDialog?.setOnDismissListener {
             this.aboutDialogPresent = false
