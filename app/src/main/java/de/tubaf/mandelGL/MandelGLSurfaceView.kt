@@ -13,6 +13,7 @@ import android.view.ScaleGestureDetector
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -62,7 +63,7 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
         holder.setFixedSize((w / DENSITY * this.superSamplingFactor).toInt(), (h / DENSITY * this.superSamplingFactor).toInt())
     }
 
-    fun saveFrame(file: File) {
+    fun saveFrame(file: File, finishedSavingFrame: () -> Unit) {
 
         // glReadPixels fills in a "direct" ByteBuffer with what is essentially big-endian RGBA
         // data (i.e. a byte of red, followed by a byte of green...).  While the Bitmap
@@ -98,8 +99,13 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
 
             bmp.compress(Bitmap.CompressFormat.PNG, 100, bos)
             bmp.recycle()
+        } catch (e: IOException) {
+            e.printStackTrace()
         } finally {
-            if (bos != null) bos.close()
+            if (bos != null) {
+                bos.close()
+                finishedSavingFrame.invoke()
+            }
         }
     }
 

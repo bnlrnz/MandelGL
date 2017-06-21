@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
+import android.text.method.LinkMovementMethod
 import android.transition.TransitionManager
 import android.view.WindowManager
 import android.widget.Button
@@ -25,6 +26,9 @@ class MainActivity : AppCompatActivity() {
     private val showSettingsConstraintSet: ConstraintSet = ConstraintSet() // default
     private var settingsHidden = true
     private var hideUnhideButton: Button? = null
+
+    private var infoDialog: Dialog? = null
+    private var aboutDialog: Dialog? = null
 
     private var infoDialogPresent = false
     private var aboutDialogPresent = false
@@ -136,23 +140,29 @@ class MainActivity : AppCompatActivity() {
     fun getCurrentImage() {
         this.mandelSurfaceView?.renderer?.glTasks?.add {
             val file = File(cacheDir?.absolutePath + separator + "temporary_file.png")
-            try {
-                file.createNewFile()
-                this.mandelSurfaceView?.saveFrame(file)
-            } catch (e: IOException) {
-                e.printStackTrace()
+
+            if (file.exists()) {
+                file.delete()
             }
 
-            val contentUri = FileProvider.getUriForFile(this, "de.tubaf.mandelGL.fileprovider", file)
+            file.createNewFile()
 
-            runOnUiThread {
-                val shareIntent = Intent()
-                shareIntent.action = Intent.ACTION_SEND
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
-                shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));
-                shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-                shareIntent.type = "image/jpeg"
-                startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.send_to)))
+            try {
+                this.mandelSurfaceView?.saveFrame(file, {
+                    runOnUiThread {
+                        val contentUri = FileProvider.getUriForFile(this, "de.tubaf.mandelGL.fileprovider", file)
+
+                        val shareIntent = Intent()
+                        shareIntent.action = Intent.ACTION_SEND
+                        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // temp permission for receiving app to read this file
+                        shareIntent.setDataAndType(contentUri, contentResolver.getType(contentUri))
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
+                        shareIntent.type = "image/png"
+                        startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.send_to)))
+                    }
+                })
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
         }
 
@@ -171,28 +181,49 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showInfoDialog() {
-        val dialog: Dialog = Dialog(this)
-        dialog.setContentView(R.layout.info)
-        val shaderText = dialog.findViewById(R.id.shaderText) as TextView?
+        if (this.infoDialog != null) {
+            if (this.infoDialog?.isShowing as Boolean) {
+                this.infoDialog?.dismiss()
+            }
+        }
+
+        this.infoDialog = Dialog(this)
+        this.infoDialog?.setContentView(R.layout.info)
+        val shaderText = this.infoDialog?.findViewById(R.id.shaderText) as TextView?
 
         //get shader source
         val rawText = this.assets.open("fragmentshader.glsl")
         val shaderString = rawText.bufferedReader().use { it.readText() }
         shaderText?.text = shaderString
 
-        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-        dialog.show()
-        dialog.setOnDismissListener {
+        //link clicked
+        val ccLink = this.infoDialog?.findViewById(R.id.cclink) as TextView?
+        ccLink?.isClickable = true
+        ccLink?.movementMethod = LinkMovementMethod.getInstance()
+
+        val sourceLink = this.infoDialog?.findViewById(R.id.sourceLink) as TextView?
+        sourceLink?.isClickable = true
+        sourceLink?.movementMethod = LinkMovementMethod.getInstance()
+
+        this.infoDialog?.getWindow()?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        this.infoDialog?.show()
+        this.infoDialog?.setOnDismissListener {
             this.infoDialogPresent = false
         }
     }
 
     private fun showAboutDialog() {
-        val dialog: Dialog = Dialog(this)
-        dialog.setContentView(R.layout.about)
-        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-        dialog.show()
-        dialog.setOnDismissListener {
+        if (this.aboutDialog != null) {
+            if (this.aboutDialog?.isShowing as Boolean) {
+                this.aboutDialog?.dismiss()
+            }
+        }
+
+        this.aboutDialog = Dialog(this)
+        aboutDialog?.setContentView(R.layout.about)
+        aboutDialog?.getWindow()?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        aboutDialog?.show()
+        aboutDialog?.setOnDismissListener {
             this.aboutDialogPresent = false
         }
     }
