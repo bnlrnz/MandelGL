@@ -2,6 +2,7 @@ package de.tubaf.mandelGL
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.support.v4.view.GestureDetectorCompat
@@ -77,20 +78,25 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
 
         val filename = file.toString()
 
-        val width = width
-        val height = height
-        val buf = ByteBuffer.allocateDirect(width * height * 4)
+        val renderWidth = this.renderer.renderBufferWidth
+        val renderHeight = this.renderer.renderBufferHeight
+        val buf = ByteBuffer.allocateDirect(renderWidth * renderHeight * 4)
         buf.order(ByteOrder.LITTLE_ENDIAN)
-        GLES20.glReadPixels(0, 0, width, height,
-                GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf)
+        GLES20.glReadPixels(0, 0, renderWidth, renderHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf)
         buf.rewind()
 
         var bos: BufferedOutputStream? = null
         try {
             bos = BufferedOutputStream(FileOutputStream(filename))
-            val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            var bmp = Bitmap.createBitmap(renderWidth, renderHeight, Bitmap.Config.ARGB_8888)
             bmp.copyPixelsFromBuffer(buf)
-            bmp.compress(Bitmap.CompressFormat.JPEG, 90, bos)
+
+            //flip image
+            val m = Matrix()
+            m.preScale(1.0f, -1.0f)
+            bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, m, false)
+
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, bos)
             bmp.recycle()
         } finally {
             if (bos != null) bos.close()

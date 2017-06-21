@@ -45,11 +45,11 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
             field = maxOf(this.minPosition, minOf(value, this.maxPosition))
         }
 
-    private var frameWidth: Int = 0
-    private var frameHeight: Int = 0
+    var frameWidth: Int = 0
+    var frameHeight: Int = 0
 
-    private var renderBufferWidth: Int = 0
-    private var renderBufferHeight: Int = 0
+    var renderBufferWidth: Int = 0
+    var renderBufferHeight: Int = 0
 
     //Limit position and scale:
     private val minPosition: Double = -3.0

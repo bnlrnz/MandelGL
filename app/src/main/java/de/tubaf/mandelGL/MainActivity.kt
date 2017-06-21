@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
 
     fun getCurrentImage() {
         this.mandelSurfaceView?.renderer?.glTasks?.add {
-            val file = File(cacheDir?.absolutePath + separator + "temporary_file.jpeg")
+            val file = File(cacheDir?.absolutePath + separator + "temporary_file.png")
             try {
                 file.createNewFile()
                 this.mandelSurfaceView?.saveFrame(file)
