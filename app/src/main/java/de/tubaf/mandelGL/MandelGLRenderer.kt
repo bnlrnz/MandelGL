@@ -83,6 +83,8 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
     companion object {
         fun checkError(dbgDomain: String, dbgText: String): Unit {
+            if (!BuildConfig.DEBUG) return
+
             val error = GLES30.glGetError()
 
             if (error != GLES30.GL_NO_ERROR) {
