@@ -45,10 +45,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //init mandel gl view
-        this.mandelSurfaceView = findViewById(R.id.mandelGLSurfaceView) as MandelGLSurfaceView?
+        this.mandelSurfaceView = findViewById<MandelGLSurfaceView?>(R.id.mandelGLSurfaceView)
 
         //setup sliders
-        this.iterationSlider = findViewById(R.id.iterationSlider) as SeekBar?
+        this.iterationSlider = findViewById<SeekBar?>(R.id.iterationSlider)
 
         this.iterationSlider?.max = 200
         this.iterationSlider?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        this.renderScaleSlider = findViewById(R.id.renderScaleSlider) as SeekBar?
+        this.renderScaleSlider = findViewById<SeekBar?>(R.id.renderScaleSlider)
         this.renderScaleSlider?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 var newVal = p1
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         //setup theme chooser
-        this.themeChooser = findViewById(R.id.radioGroup) as RadioGroup?
+        this.themeChooser = findViewById<RadioGroup?>(R.id.radioGroup)
         this.themeChooser?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioTrippy -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.psychue
@@ -97,9 +97,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         //hide/show settings, setup constraint transitions
-        this.hideUnhideButton = findViewById(R.id.hideUnhideButton) as Button
+        this.hideUnhideButton = findViewById<Button>(R.id.hideUnhideButton)
 
-        this.constraintLayout = findViewById(R.id.constraintLayout) as ConstraintLayout?
+        this.constraintLayout = findViewById<ConstraintLayout?>(R.id.constraintLayout)
         this.showSettingsConstraintSet.clone(this.constraintLayout)
         this.hideSettingsConstraintSet.clone(this.constraintLayout)
         this.hideSettingsConstraintSet.clear(R.id.settingsLayout, ConstraintSet.BOTTOM)
@@ -121,18 +121,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         //button interaction
-        findViewById(R.id.aboutButton).setOnClickListener {
+        findViewById<Button>(R.id.aboutButton).setOnClickListener {
             this.aboutDialogPresent = true
             showAboutDialog()
         }
 
-        findViewById(R.id.infoButton).setOnClickListener {
+        findViewById<Button>(R.id.infoButton).setOnClickListener {
             this.infoDialogPresent = true
             showInfoDialog()
         }
 
         //share feature
-        findViewById(R.id.shareButton).setOnClickListener {
+        findViewById<Button>(R.id.shareButton).setOnClickListener {
             getCurrentImage()
         }
     }
@@ -189,7 +189,7 @@ class MainActivity : AppCompatActivity() {
 
         this.infoDialog = Dialog(this)
         this.infoDialog?.setContentView(R.layout.info)
-        val shaderText = this.infoDialog?.findViewById(R.id.shaderText) as TextView?
+        val shaderText = this.infoDialog?.findViewById<TextView?>(R.id.shaderText)
 
         //get shader source
         val rawText = this.assets.open("fragmentshader.glsl")
@@ -197,11 +197,11 @@ class MainActivity : AppCompatActivity() {
         shaderText?.text = shaderString
 
         //link clicked
-        val ccLink = this.infoDialog?.findViewById(R.id.cclink) as TextView?
+        val ccLink = this.infoDialog?.findViewById<TextView?>(R.id.cclink)
         ccLink?.isClickable = true
         ccLink?.movementMethod = LinkMovementMethod.getInstance()
 
-        val sourceLink = this.infoDialog?.findViewById(R.id.sourceLink) as TextView?
+        val sourceLink = this.infoDialog?.findViewById<TextView?>(R.id.sourceLink)
         sourceLink?.isClickable = true
         sourceLink?.movementMethod = LinkMovementMethod.getInstance()
 
