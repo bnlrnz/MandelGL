@@ -9,11 +9,10 @@ import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.text.method.LinkMovementMethod
 import android.transition.TransitionManager
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.RadioGroup
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import java.io.File
 import java.io.File.separator
 import java.io.IOException
@@ -38,6 +37,8 @@ class MainActivity : AppCompatActivity() {
 
     private var themeChooser: RadioGroup? = null
 
+    private var progressView: LinearLayout? = null
+
     private var mandelSurfaceView: MandelGLSurfaceView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,10 +46,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //init mandel gl view
-        this.mandelSurfaceView = findViewById<MandelGLSurfaceView?>(R.id.mandelGLSurfaceView)
+        this.mandelSurfaceView = findViewById(R.id.mandelGLSurfaceView) as MandelGLSurfaceView?
 
         //setup sliders
-        this.iterationSlider = findViewById<SeekBar?>(R.id.iterationSlider)
+        this.iterationSlider = findViewById(R.id.iterationSlider) as SeekBar?
 
         this.iterationSlider?.max = 200
         this.iterationSlider?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -64,7 +65,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        this.renderScaleSlider = findViewById<SeekBar?>(R.id.renderScaleSlider)
+        this.renderScaleSlider = findViewById(R.id.renderScaleSlider) as SeekBar?
         this.renderScaleSlider?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 var newVal = p1
@@ -85,7 +86,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         //setup theme chooser
-        this.themeChooser = findViewById<RadioGroup?>(R.id.radioGroup)
+        this.themeChooser = findViewById(R.id.radioGroup) as RadioGroup?
         this.themeChooser?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioTrippy -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.psychue
@@ -97,9 +98,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         //hide/show settings, setup constraint transitions
-        this.hideUnhideButton = findViewById<Button>(R.id.hideUnhideButton)
+        this.hideUnhideButton = findViewById(R.id.hideUnhideButton) as Button?
 
-        this.constraintLayout = findViewById<ConstraintLayout?>(R.id.constraintLayout)
+        this.constraintLayout = findViewById(R.id.constraintLayout) as ConstraintLayout?
         this.showSettingsConstraintSet.clone(this.constraintLayout)
         this.hideSettingsConstraintSet.clone(this.constraintLayout)
         this.hideSettingsConstraintSet.clear(R.id.settingsLayout, ConstraintSet.BOTTOM)
@@ -121,23 +122,31 @@ class MainActivity : AppCompatActivity() {
         }
 
         //button interaction
-        findViewById<Button>(R.id.aboutButton).setOnClickListener {
+        findViewById(R.id.aboutButton).setOnClickListener {
             this.aboutDialogPresent = true
             showAboutDialog()
         }
 
-        findViewById<Button>(R.id.infoButton).setOnClickListener {
+        findViewById(R.id.infoButton).setOnClickListener {
             this.infoDialogPresent = true
             showInfoDialog()
         }
 
         //share feature
-        findViewById<Button>(R.id.shareButton).setOnClickListener {
+        findViewById(R.id.shareButton).setOnClickListener {
             getCurrentImage()
         }
+
+        //make sure rendering progress view is gone
+        this.progressView = findViewById(R.id.progressLayout) as LinearLayout?
     }
 
     fun getCurrentImage() {
+
+        //show progress spinner
+        this.progressView?.visibility = VISIBLE
+        this.progressView?.bringToFront()
+
         this.mandelSurfaceView?.renderer?.glTasks?.add {
             val file = File(cacheDir?.absolutePath + separator + "temporary_file.png")
 
@@ -150,6 +159,10 @@ class MainActivity : AppCompatActivity() {
             try {
                 this.mandelSurfaceView?.saveFrame(file, {
                     runOnUiThread {
+
+                        //hide progress spinner
+                        this.progressView?.visibility = GONE
+
                         val contentUri = FileProvider.getUriForFile(this, "de.tubaf.mandelGL.fileprovider", file)
 
                         val shareIntent = Intent()
@@ -163,6 +176,9 @@ class MainActivity : AppCompatActivity() {
                 })
             } catch (e: IOException) {
                 e.printStackTrace()
+
+                //hide progress spinner
+                this.progressView?.visibility = GONE
             }
         }
 
@@ -249,6 +265,11 @@ class MainActivity : AppCompatActivity() {
         if (this.aboutDialogPresent) {
             showAboutDialog()
         }
+
+        // this is needed to show these views on top of the glsurfaceview on devices with hardware buttons (back home etc)
+        // but why? :O
+        this.hideUnhideButton?.bringToFront()
+        findViewById(R.id.settingsLayout).bringToFront()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

@@ -32,5 +32,6 @@
     <string name="ifiLogoDescription">Logo of Institut für Informatik</string>
     <string name="tubafLogoDescription">Logo of the TU Bergakademie Freiberg</string>
     <string name="send_to">Send current view as image</string>
+    <string name="renderingSpinnerText">Rendering…</string>
 
 </resources>
