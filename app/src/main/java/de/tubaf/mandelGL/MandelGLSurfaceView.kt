@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.opengl.GLES20
+import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.support.v4.view.GestureDetectorCompat
 import android.util.AttributeSet
@@ -16,7 +17,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-
 
 /**
  * Created by lorenz on 16.06.17 for de.tubaf.lndw
@@ -83,7 +83,11 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
         val renderHeight = this.renderer.renderBufferHeight
         val buf = ByteBuffer.allocateDirect(renderWidth * renderHeight * 4)
         buf.order(ByteOrder.LITTLE_ENDIAN)
-        GLES20.glReadPixels(0, 0, renderWidth, renderHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf)
+
+        GLES30.glFinish()
+        GLES30.glReadPixels(0, 0, renderWidth, renderHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf)
+        MandelGLRenderer.checkError("glReadPixels", "Failed to read pixels")
+
         buf.rewind()
 
         var bos: BufferedOutputStream? = null
@@ -176,3 +180,4 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
     override fun onLongPress(e: MotionEvent?) {
     }
 }
+

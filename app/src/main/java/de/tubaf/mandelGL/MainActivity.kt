@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
+import android.text.Layout
 import android.text.method.LinkMovementMethod
 import android.transition.TransitionManager
 import android.view.View.GONE
@@ -46,10 +47,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //init mandel gl view
-        this.mandelSurfaceView = findViewById(R.id.mandelGLSurfaceView) as MandelGLSurfaceView?
+        this.mandelSurfaceView = findViewById(R.id.mandelGLSurfaceView)
 
         //setup sliders
-        this.iterationSlider = findViewById(R.id.iterationSlider) as SeekBar?
+        this.iterationSlider = findViewById(R.id.iterationSlider)
 
         this.iterationSlider?.max = 200
         this.iterationSlider?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        this.renderScaleSlider = findViewById(R.id.renderScaleSlider) as SeekBar?
+        this.renderScaleSlider = findViewById(R.id.renderScaleSlider)
         this.renderScaleSlider?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 var newVal = p1
@@ -86,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         //setup theme chooser
-        this.themeChooser = findViewById(R.id.radioGroup) as RadioGroup?
+        this.themeChooser = findViewById(R.id.radioGroup)
         this.themeChooser?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioTrippy -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.psychue
@@ -98,9 +99,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         //hide/show settings, setup constraint transitions
-        this.hideUnhideButton = findViewById(R.id.hideUnhideButton) as Button?
+        this.hideUnhideButton = findViewById(R.id.hideUnhideButton)
 
-        this.constraintLayout = findViewById(R.id.constraintLayout) as ConstraintLayout?
+        this.constraintLayout = findViewById(R.id.constraintLayout)
         this.showSettingsConstraintSet.clone(this.constraintLayout)
         this.hideSettingsConstraintSet.clone(this.constraintLayout)
         this.hideSettingsConstraintSet.clear(R.id.settingsLayout, ConstraintSet.BOTTOM)
@@ -122,23 +123,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         //button interaction
-        findViewById(R.id.aboutButton).setOnClickListener {
+        findViewById<Button>(R.id.aboutButton).setOnClickListener {
             this.aboutDialogPresent = true
             showAboutDialog()
         }
 
-        findViewById(R.id.infoButton).setOnClickListener {
+        findViewById<Button>(R.id.infoButton).setOnClickListener {
             this.infoDialogPresent = true
             showInfoDialog()
         }
 
         //share feature
-        findViewById(R.id.shareButton).setOnClickListener {
+        findViewById<Button>(R.id.shareButton).setOnClickListener {
             getCurrentImage()
         }
 
         //make sure rendering progress view is gone
-        this.progressView = findViewById(R.id.progressLayout) as LinearLayout?
+        this.progressView = findViewById(R.id.progressLayout)
     }
 
     fun getCurrentImage() {
@@ -269,7 +270,7 @@ class MainActivity : AppCompatActivity() {
         // this is needed to show these views on top of the glsurfaceview on devices with hardware buttons (back home etc)
         // but why? :O
         this.hideUnhideButton?.bringToFront()
-        findViewById(R.id.settingsLayout).bringToFront()
+        findViewById<ConstraintLayout>(R.id.settingsLayout).bringToFront()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
