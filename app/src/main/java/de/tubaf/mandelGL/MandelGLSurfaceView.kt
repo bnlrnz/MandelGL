@@ -1,5 +1,6 @@
 package de.tubaf.mandelGL
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -18,12 +19,8 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-/**
- * Created by lorenz on 16.06.17 for de.tubaf.lndw
- */
-
 class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceView(context, attrs), ScaleGestureDetector.OnScaleGestureListener, GestureDetector.OnGestureListener {
-    private val DENSITY = getContext().resources.displayMetrics.density
+    private val density = getContext().resources.displayMetrics.density
 
     var superSamplingFactor = 2.0
         set(value) {
@@ -56,11 +53,10 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         this.renderer.updateFrame(w, h)
-        holder.setFixedSize((w / DENSITY * this.superSamplingFactor).toInt(), (h / DENSITY * this.superSamplingFactor).toInt())
+        holder.setFixedSize((w / density * this.superSamplingFactor).toInt(), (h / density * this.superSamplingFactor).toInt())
     }
 
     fun saveFrame(file: File, finishedSavingFrame: () -> Unit) {
-
         // glReadPixels fills in a "direct" ByteBuffer with what is essentially big-endian RGBA
         // data (i.e. a byte of red, followed by a byte of green...).  While the Bitmap
         // constructor that takes an int[] wants little-endian ARGB (blue/red swapped), the
@@ -110,6 +106,7 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
     }
 
     //Handle touch events
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         var retVal = scaleDetector?.onTouchEvent(event)
         retVal = gestureDetector?.onTouchEvent(event) as Boolean || retVal as Boolean
@@ -126,31 +123,28 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
     }
 
     //Pinch Zooming
-    override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-        return true
-    }
+    override fun onScaleBegin(detector: ScaleGestureDetector?) = true
 
-    override fun onScaleEnd(detector: ScaleGestureDetector?) {
-    }
+    override fun onScaleEnd(detector: ScaleGestureDetector?) {}
 
     override fun onScale(detector: ScaleGestureDetector?): Boolean {
         val unwrappedDetector: ScaleGestureDetector = detector ?: return false
 
         //Get the pinch center:
-        val point = floatArrayOf(unwrappedDetector.focusX / this.DENSITY, unwrappedDetector.focusY / this.DENSITY)
+        val point = floatArrayOf(unwrappedDetector.focusX / this.density, unwrappedDetector.focusY / this.density)
 
         //println("Pinch Center: ${point[0]}, ${point[1]}")
 
         //Convert to Gaussian:
-        val centerX = this.renderer.positionX + (point[0] - 0.5f * width / DENSITY) / this.renderer.scale
-        val centerY = this.renderer.positionY - (point[1] - 0.5f * height / DENSITY) / this.renderer.scale
+        val centerX = this.renderer.positionX + (point[0] - 0.5f * width / density) / this.renderer.scale
+        val centerY = this.renderer.positionY - (point[1] - 0.5f * height / density) / this.renderer.scale
 
         //Execute the scale:
         this.renderer.scale = this.renderer.scale * unwrappedDetector.scaleFactor.toDouble()
 
         //Move the saved Gaussian back to the center point:
-        this.renderer.positionX = centerX - (point[0] - 0.5f * width / DENSITY) / this.renderer.scale
-        this.renderer.positionY = centerY + (point[1] - 0.5f * height / DENSITY) / this.renderer.scale
+        this.renderer.positionX = centerX - (point[0] - 0.5f * width / density) / this.renderer.scale
+        this.renderer.positionY = centerY + (point[1] - 0.5f * height / density) / this.renderer.scale
 
         requestRender()
 
@@ -158,22 +152,14 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
     }
 
     //Not needed
-    override fun onShowPress(e: MotionEvent?) {
-    }
+    override fun onShowPress(e: MotionEvent?) {}
 
-    override fun onSingleTapUp(e: MotionEvent?): Boolean {
-        return false
-    }
+    override fun onSingleTapUp(e: MotionEvent?) = false
 
-    override fun onDown(e: MotionEvent?): Boolean {
-        return false
-    }
+    override fun onDown(e: MotionEvent?) = false
 
-    override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
-        return false
-    }
+    override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float) = false
 
-    override fun onLongPress(e: MotionEvent?) {
-    }
+    override fun onLongPress(e: MotionEvent?) {}
 }
 

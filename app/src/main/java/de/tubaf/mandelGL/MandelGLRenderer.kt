@@ -12,11 +12,6 @@ import java.nio.FloatBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-
-/**
- * Created by lorenz on 16.06.17 for de.tubaf.lndw
- */
-
 class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
     private var context: Context = Activity()
 
@@ -67,7 +62,7 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
     private val clearColor = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
 
-    var hueTexture: HueTexture = HueTexture.firehue
+    var hueTexture: HueTexture = HueTexture.FIRE_HUE
         set(value) {
             field = value
 
@@ -350,7 +345,7 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         val dbgDomain = "Creating texture $hue"
 
         //Read the bytes:
-        val rawText = this.context.assets.open(hue.name + ".rgba")
+        val rawText = this.context.assets.open(hue.filename + ".rgba")
         val pixelData = rawText.buffered().readBytes()
 
         //Calculate the pixels count:

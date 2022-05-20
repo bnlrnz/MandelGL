@@ -87,10 +87,10 @@ class MainActivity : AppCompatActivity() {
         this.themeChooser = findViewById(R.id.radioGroup)
         this.themeChooser?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.radioTrippy -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.psychue
-                R.id.radioAsh -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.ashhue
-                R.id.radioFire -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.firehue
-                R.id.radioIce -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.icehue
+                R.id.radioPsy -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.PSYC_HUE
+                R.id.radioAsh -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.ASH_HUE
+                R.id.radioFire -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.FIRE_HUE
+                R.id.radioIce -> this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.ICE_HUE
             }
             this.mandelSurfaceView?.requestRender()
         }

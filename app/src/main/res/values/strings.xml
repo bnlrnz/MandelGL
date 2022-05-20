@@ -26,7 +26,7 @@
     <string name="contributionTitle">Contribution</string>
     <string name="contributionText">Do you have any idea how to make this renderer better / faster / more visually appealing? Or just want to take a look at the details? No problem, you are welcome :)</string>
     <string name="contribLink"><a href="https://github.com/bnlrnz/MandelGL">Get the source code!</a></string>
-    <string name="legalText">Freiberg University of Mining and Technology\n\nComputer Science Institute\nOperating Systems and Communication Technology\nBernhard-von-Cotta-Straße 2\n09599 Freiberg\n\nProf. Dr. Konrad Froitzheim\nRichard Weinhold, B.Sc.\nJonas Treumer, M.Sc.\nBen Lorenz, M.Sc.\n\nThis project has been developed in the context of the lecture \'Multimedia\' in summer 2017. The source code has been published under the Apache License 2.0.</string>
+    <string name="legalText">Freiberg University of Mining and Technology\n\nComputer Science Institute\nOperating Systems and Communication Technology\nBernhard-von-Cotta-Straße 2\n09599 Freiberg\n\nProf. Dr. Konrad Froitzheim\nRichard Weinhold, M.Sc.\nJonas Treumer, M.Sc.\nBen Lorenz, M.Sc.\nLorenzo Neumann, M.Sc.\n\nThis project has been developed in the context of the lecture \'Multimedia\' in summer 2017. The source code has been published under the Apache License 2.0.</string>
     <string name="formula1Description">complex recursive sequence</string>
     <string name="formula2Description">mathematically formulated condition for a complex number to be part of the mandelbrot set</string>
     <string name="ifiLogoDescription">Logo of Institut für Informatik</string>
