@@ -6,11 +6,11 @@ import android.graphics.Matrix
 import android.opengl.GLES20
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
-import android.support.v4.view.GestureDetectorCompat
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
+import androidx.core.view.GestureDetectorCompat
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -51,10 +51,6 @@ class MandelGLSurfaceView(context: Context?, attrs: AttributeSet) : GLSurfaceVie
         //Create gesture recognizers for panning and pinching:
         this.gestureDetector = GestureDetectorCompat(getContext(), this)
         this.scaleDetector = ScaleGestureDetector(getContext(), this)
-    }
-
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

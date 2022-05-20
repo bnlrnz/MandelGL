@@ -45,8 +45,8 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
             field = maxOf(this.minPosition, minOf(value, this.maxPosition))
         }
 
-    var frameWidth: Int = 0
-    var frameHeight: Int = 0
+    private var frameWidth: Int = 0
+    private var frameHeight: Int = 0
 
     var renderBufferWidth: Int = 0
     var renderBufferHeight: Int = 0
@@ -64,9 +64,6 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         }
 
     var iterations = 50
-        set(value) {
-            field = value
-        }
 
     private val clearColor = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
 
@@ -82,7 +79,7 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
     val glTasks: ArrayList<() -> Unit> = ArrayList()
 
     companion object {
-        fun checkError(dbgDomain: String, dbgText: String): Unit {
+        fun checkError(dbgDomain: String, dbgText: String) {
             if (!BuildConfig.DEBUG) return
 
             val error = GLES30.glGetError()
@@ -108,22 +105,22 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         this.glTasks.clear()
 
         GLES30.glUniform2f(this.gaussianPositionUniform, this.positionX.toFloat(), this.positionY.toFloat())
-        MandelGLRenderer.checkError(dbgDomain, "Failed to provide uniform (gaussianPosition)")
+        checkError(dbgDomain, "Failed to provide uniform (gaussianPosition)")
 
         GLES30.glUniform2f(this.gaussianHalfFrameUniform, (0.5 * this.frameWidth.toDouble() / this.scale).toFloat(), (0.5 * this.frameHeight.toDouble() / this.scale).toFloat())
-        MandelGLRenderer.checkError(dbgDomain, "Failed to provide uniform (gaussianPosition)")
+        checkError(dbgDomain, "Failed to provide uniform (gaussianPosition)")
 
         GLES30.glUniform1ui(this.iterationsUniform, this.iterations)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to provide uniform (iterations)")
+        checkError(dbgDomain, "Failed to provide uniform (iterations)")
 
         //Clear the renderbuffer with the given clear color.
         //Second parameter means: drawbuffers[0] which is the renderbuffer.
         GLES30.glClearBufferfv(GLES30.GL_COLOR, 0, FloatBuffer.wrap(this.clearColor))
-        MandelGLRenderer.checkError(dbgDomain, "Failed to clear renderbuffer")
+        checkError(dbgDomain, "Failed to clear renderbuffer")
 
         //Draw a full-screen-quad:
         GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP, 0, 4)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to draw")
+        checkError(dbgDomain, "Failed to draw")
 
         //Log.d("Render at", "" + this.positionX + ", " + this.positionY + " with scale: " + this.scale)
     }
@@ -133,7 +130,7 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         this.renderBufferHeight = height
 
         GLES30.glViewport(0, 0, width, height)
-        MandelGLRenderer.checkError("Setting Viewport", "Failed to specify the viewport")
+        checkError("Setting Viewport", "Failed to specify the viewport")
     }
 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
@@ -152,26 +149,26 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
         //Disable alpha blending:
         GLES30.glDisable(GLES30.GL_BLEND)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to disable alpha blending")
+        checkError(dbgDomain, "Failed to disable alpha blending")
 
         //Disable the depth test:
         GLES30.glDisable(GLES30.GL_DEPTH_TEST)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to disable the depth test")
+        checkError(dbgDomain, "Failed to disable the depth test")
 
         GLES30.glDepthMask(false)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to disable the depth mask")
+        checkError(dbgDomain, "Failed to disable the depth mask")
 
         //Disable the scissor test:
         GLES30.glDisable(GLES30.GL_SCISSOR_TEST)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to disable the scissor test")
+        checkError(dbgDomain, "Failed to disable the scissor test")
 
         //Disable the stencil test:
         GLES30.glDisable(GLES30.GL_STENCIL_TEST)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to disable the stencil test")
+        checkError(dbgDomain, "Failed to disable the stencil test")
 
         //Disable dithering:
         GLES30.glDisable(GLES30.GL_DITHER)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to disable dithering")
+        checkError(dbgDomain, "Failed to disable dithering")
     }
 
     private fun initializeVertexData() {
@@ -179,11 +176,11 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
         //Generate a VBO:
         GLES30.glGenBuffers(1, this.vertexBufferObject, 0)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to generate VBO")
+        checkError(dbgDomain, "Failed to generate VBO")
 
         //Bind it:
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, this.vertexBufferObject[0])
-        MandelGLRenderer.checkError(dbgDomain, "Failed to bind VBO")
+        checkError(dbgDomain, "Failed to bind VBO")
 
         //Create simple vertex data for the corners:
         val vertexData = floatArrayOf(-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f)
@@ -196,19 +193,19 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
         //Upload it:
         GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, 8 * 4, vertexDataBuffer, GLES30.GL_STATIC_DRAW)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to buffer vertex data")
+        checkError(dbgDomain, "Failed to buffer vertex data")
 
         //Enable the array:
         val positionAttribute = 0
 
         GLES30.glEnableVertexAttribArray(positionAttribute)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to enable position attribute")
+        checkError(dbgDomain, "Failed to enable position attribute")
 
         //Specify the vertex data:
         val stride = 4 * 2
 
         GLES30.glVertexAttribPointer(positionAttribute, 2, GLES30.GL_FLOAT, false, stride, 0)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to specify position attribute")
+        checkError(dbgDomain, "Failed to specify position attribute")
     }
 
     private fun initializeShaders() {
@@ -222,29 +219,29 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
         //Create the program:
         this.shaderProgramHandle = GLES30.glCreateProgram()
-        MandelGLRenderer.checkError(dbgDomain, "Failed to generate shader program handle")
+        checkError(dbgDomain, "Failed to generate shader program handle")
 
         //Attach the shaders:
         GLES30.glAttachShader(this.shaderProgramHandle, vertexShaderHandle)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to attach vertex shader")
+        checkError(dbgDomain, "Failed to attach vertex shader")
 
         GLES30.glAttachShader(this.shaderProgramHandle, fragmentShaderHandle)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to attach fragment shader")
+        checkError(dbgDomain, "Failed to attach fragment shader")
 
         //Link the program:
         GLES30.glLinkProgram(this.shaderProgramHandle)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to link shader program")
+        checkError(dbgDomain, "Failed to link shader program")
 
         //Check if we had success:
         val linkingSuccess = IntArray(1)
 
         GLES30.glGetProgramiv(this.shaderProgramHandle, GLES30.GL_LINK_STATUS, linkingSuccess, 0)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to retrieve shader program parameter")
+        checkError(dbgDomain, "Failed to retrieve shader program parameter")
 
         if (linkingSuccess[0] != GLES30.GL_TRUE) {
             //Retrieve the error message:
             val errorMessage = GLES30.glGetProgramInfoLog(this.shaderProgramHandle)
-            MandelGLRenderer.checkError(dbgDomain, "Failed to retrieve shader program info log")
+            checkError(dbgDomain, "Failed to retrieve shader program info log")
 
             //Print it and fail:
             Log.d(dbgDomain, errorMessage)
@@ -253,47 +250,47 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
         //After we have linked the program, it's a good idea to detach the shaders from it:
         GLES30.glDetachShader(this.shaderProgramHandle, vertexShaderHandle)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to detach vertex shader")
+        checkError(dbgDomain, "Failed to detach vertex shader")
 
         GLES30.glDetachShader(this.shaderProgramHandle, fragmentShaderHandle)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to detach fragment shader")
+        checkError(dbgDomain, "Failed to detach fragment shader")
 
         //We don't need the shaders anymore, so we can delete them right here:
         GLES30.glDeleteShader(vertexShaderHandle)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to devale vertex shader")
+        checkError(dbgDomain, "Failed to devale vertex shader")
 
         GLES30.glDeleteShader(fragmentShaderHandle)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to devale fragment shader")
+        checkError(dbgDomain, "Failed to devale fragment shader")
 
         //Use our program from now on:
         GLES30.glUseProgram(this.shaderProgramHandle)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to enable shader program")
+        checkError(dbgDomain, "Failed to enable shader program")
 
         //Retrieve the uniforms:
         this.gaussianPositionUniform = glGetUniformLocation(this.shaderProgramHandle, "gaussianPosition")
-        MandelGLRenderer.checkError(dbgDomain, "Failed to retrieve uniform (gaussianPosition)")
+        checkError(dbgDomain, "Failed to retrieve uniform (gaussianPosition)")
         assert(this.gaussianPositionUniform >= 0)
 
         this.gaussianHalfFrameUniform = glGetUniformLocation(this.shaderProgramHandle, "gaussianHalfFrame")
-        MandelGLRenderer.checkError(dbgDomain, "Failed to retrieve uniform (gaussianHalfFrame)")
+        checkError(dbgDomain, "Failed to retrieve uniform (gaussianHalfFrame)")
         assert(this.gaussianHalfFrameUniform >= 0)
 
         this.iterationsUniform = glGetUniformLocation(this.shaderProgramHandle, "iterations")
-        MandelGLRenderer.checkError(dbgDomain, "Failed to retrieve uniform (iterations)")
+        checkError(dbgDomain, "Failed to retrieve uniform (iterations)")
         assert(this.iterationsUniform >= 0)
 
         //Set the texture uniform:
         val hueTextureUniform = glGetUniformLocation(this.shaderProgramHandle, "hueTexture")
-        MandelGLRenderer.checkError(dbgDomain, "Failed to retrieve uniform (hueTexture)")
+        checkError(dbgDomain, "Failed to retrieve uniform (hueTexture)")
         assert(hueTextureUniform >= 0)
 
         //Assign the value to this uniform (const):
         glUniform1i(hueTextureUniform, 0)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to assign to constant uniform (hueTexture)")
+        checkError(dbgDomain, "Failed to assign to constant uniform (hueTexture)")
 
         //Release the shader compiler:
         glReleaseShaderCompiler()
-        MandelGLRenderer.checkError(dbgDomain, "Failed to release the shader compiler")
+        checkError(dbgDomain, "Failed to release the shader compiler")
     }
 
 
@@ -302,7 +299,7 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
         //Create a shader of our type:
         val shaderHandle = GLES30.glCreateShader(shaderType)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to generate shader handle")
+        checkError(dbgDomain, "Failed to generate shader handle")
 
         //Get a null-terminated raw char pointer to the source:
         val rawText = this.context.assets.open(sourceFileName)
@@ -310,22 +307,22 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
         //Pass the shader source down to GLES:
         GLES30.glShaderSource(shaderHandle, shaderString)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to provide shader source code")
+        checkError(dbgDomain, "Failed to provide shader source code")
 
         //Compile the shader:
         GLES30.glCompileShader(shaderHandle)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to compile shader")
+        checkError(dbgDomain, "Failed to compile shader")
 
         //Check if we had success:
         val compilationSuccess = IntArray(1)
 
         GLES30.glGetShaderiv(shaderHandle, GLES30.GL_COMPILE_STATUS, compilationSuccess, 0)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to retrieve shader parameter")
+        checkError(dbgDomain, "Failed to retrieve shader parameter")
 
         if (compilationSuccess[0] != GLES30.GL_TRUE) {
             //Retrieve the error message:
             val errorMessageRaw = GLES30.glGetShaderInfoLog(shaderHandle)
-            MandelGLRenderer.checkError(dbgDomain, "Failed to retrieve shader info log")
+            checkError(dbgDomain, "Failed to retrieve shader info log")
 
             //Print it and fail:
             Log.d(dbgDomain, errorMessageRaw)
@@ -341,16 +338,16 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
 
         //Activate the texture unit:
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to activate texture unit")
+        checkError(dbgDomain, "Failed to activate texture unit")
 
         //Create the textures:
         HueTexture.values().forEach {
-            this.hueTextures.put(it, createHueTexture(it))
+            this.hueTextures[it] = createHueTexture(it)
         }
     }
 
     private fun createHueTexture(hue: HueTexture): Int {
-        val dbgDomain = "Creating texture " + hue.toString()
+        val dbgDomain = "Creating texture $hue"
 
         //Read the bytes:
         val rawText = this.context.assets.open(hue.name + ".rgba")
@@ -365,33 +362,33 @@ class MandelGLRenderer(context: Context?) : GLSurfaceView.Renderer {
         val textureHandle = IntArray(1)
 
         GLES30.glGenTextures(1, textureHandle, 0)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to generate texture handle")
+        checkError(dbgDomain, "Failed to generate texture handle")
 
         //Bind our texture:
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureHandle[0])
-        MandelGLRenderer.checkError(dbgDomain, "Failed to bind texture")
+        checkError(dbgDomain, "Failed to bind texture")
 
         //Set wrapping mode:
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to set wrapping for s")
+        checkError(dbgDomain, "Failed to set wrapping for s")
 
         glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to set wrapping for t")
+        checkError(dbgDomain, "Failed to set wrapping for t")
 
         //Provide the bytes:
         GLES30.glTexStorage2D(GLES30.GL_TEXTURE_2D, 1, GLES30.GL_RGBA8, pixelsCount, 1)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to specify texture storage (2D)")
+        checkError(dbgDomain, "Failed to specify texture storage (2D)")
 
         GLES30.glTexSubImage2D(GLES30.GL_TEXTURE_2D, 0, 0, 0, pixelsCount, 1, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, ByteBuffer.wrap(pixelData))
-        MandelGLRenderer.checkError(dbgDomain, "Failed to push texture data (2D)")
+        checkError(dbgDomain, "Failed to push texture data (2D)")
 
         //Set min filter:
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to set texture minification filter")
+        checkError(dbgDomain, "Failed to set texture minification filter")
 
         //Set mag filter:
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST)
-        MandelGLRenderer.checkError(dbgDomain, "Failed to set texture magnification filter")
+        checkError(dbgDomain, "Failed to set texture magnification filter")
 
         //Return the texture handle:
         return textureHandle[0]

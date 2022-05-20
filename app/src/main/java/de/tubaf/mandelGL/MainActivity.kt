@@ -3,24 +3,21 @@ package de.tubaf.mandelGL
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.ConstraintSet
-import android.support.v4.content.FileProvider
-import android.support.v7.app.AppCompatActivity
-import android.text.Layout
 import android.text.method.LinkMovementMethod
 import android.transition.TransitionManager
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.WindowManager
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.FileProvider
 import java.io.File
 import java.io.File.separator
 import java.io.IOException
 
-
 class MainActivity : AppCompatActivity() {
-
     private var constraintLayout: ConstraintLayout? = null
     private val hideSettingsConstraintSet: ConstraintSet = ConstraintSet()
     private val showSettingsConstraintSet: ConstraintSet = ConstraintSet() // default
@@ -142,8 +139,7 @@ class MainActivity : AppCompatActivity() {
         this.progressView = findViewById(R.id.progressLayout)
     }
 
-    fun getCurrentImage() {
-
+    private fun getCurrentImage() {
         //show progress spinner
         this.progressView?.visibility = VISIBLE
         this.progressView?.bringToFront()
@@ -158,13 +154,13 @@ class MainActivity : AppCompatActivity() {
             file.createNewFile()
 
             try {
-                this.mandelSurfaceView?.saveFrame(file, {
+                this.mandelSurfaceView?.saveFrame(file) {
                     runOnUiThread {
-
                         //hide progress spinner
                         this.progressView?.visibility = GONE
 
-                        val contentUri = FileProvider.getUriForFile(this, "de.tubaf.mandelGL.fileprovider", file)
+                        val contentUri =
+                            FileProvider.getUriForFile(this, "de.tubaf.mandelGL.fileprovider", file)
 
                         val shareIntent = Intent()
                         shareIntent.action = Intent.ACTION_SEND
@@ -172,9 +168,14 @@ class MainActivity : AppCompatActivity() {
                         shareIntent.setDataAndType(contentUri, contentResolver.getType(contentUri))
                         shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
                         shareIntent.type = "image/png"
-                        startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.send_to)))
+                        startActivity(
+                            Intent.createChooser(
+                                shareIntent,
+                                resources.getText(R.string.send_to)
+                            )
+                        )
                     }
-                })
+                }
             } catch (e: IOException) {
                 e.printStackTrace()
 
@@ -273,35 +274,35 @@ class MainActivity : AppCompatActivity() {
         findViewById<ConstraintLayout>(R.id.settingsLayout).bringToFront()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         //save rendering state
-        outState?.putDouble("positionX", this.mandelSurfaceView?.renderer?.positionX ?: 0.0)
-        outState?.putDouble("positionY", this.mandelSurfaceView?.renderer?.positionY ?: 0.0)
-        outState?.putDouble("scale", this.mandelSurfaceView?.renderer?.scale ?: 75.0)
-        outState?.putString("theme", this.mandelSurfaceView?.renderer?.hueTexture.toString())
-        outState?.putDouble("superSamplingFactor", this.mandelSurfaceView?.superSamplingFactor ?: 2.0)
+        outState.putDouble("positionX", this.mandelSurfaceView?.renderer?.positionX ?: 0.0)
+        outState.putDouble("positionY", this.mandelSurfaceView?.renderer?.positionY ?: 0.0)
+        outState.putDouble("scale", this.mandelSurfaceView?.renderer?.scale ?: 75.0)
+        outState.putString("theme", this.mandelSurfaceView?.renderer?.hueTexture.toString())
+        outState.putDouble("superSamplingFactor", this.mandelSurfaceView?.superSamplingFactor ?: 2.0)
 
         //save gui state
-        outState?.putBoolean("settingsHidden", this.settingsHidden)
-        outState?.putBoolean("infoDialogPresent", this.infoDialogPresent)
-        outState?.putBoolean("aboutDialogPresent", this.aboutDialogPresent)
+        outState.putBoolean("settingsHidden", this.settingsHidden)
+        outState.putBoolean("infoDialogPresent", this.infoDialogPresent)
+        outState.putBoolean("aboutDialogPresent", this.aboutDialogPresent)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
         //restore rendering state
-        this.mandelSurfaceView?.renderer?.positionX = savedInstanceState?.getDouble("positionX") ?: 0.0
-        this.mandelSurfaceView?.renderer?.positionY = savedInstanceState?.getDouble("positionY") ?: 0.0
-        this.mandelSurfaceView?.renderer?.scale = savedInstanceState?.getDouble("scale") ?: 75.0
-        this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.valueOf(savedInstanceState?.getString("theme") ?: "firehue")
-        this.mandelSurfaceView?.superSamplingFactor = savedInstanceState?.getDouble("superSamplingFactor") ?: 2.0
+        this.mandelSurfaceView?.renderer?.positionX = savedInstanceState.getDouble("positionX")
+        this.mandelSurfaceView?.renderer?.positionY = savedInstanceState.getDouble("positionY")
+        this.mandelSurfaceView?.renderer?.scale = savedInstanceState.getDouble("scale")
+        this.mandelSurfaceView?.renderer?.hueTexture = HueTexture.valueOf(savedInstanceState.getString("theme") ?: "firehue")
+        this.mandelSurfaceView?.superSamplingFactor = savedInstanceState.getDouble("superSamplingFactor")
 
         //restore gui state
-        this.settingsHidden = savedInstanceState?.getBoolean("settingsHidden") ?: false
-        this.infoDialogPresent = savedInstanceState?.getBoolean("infoDialogPresent") ?: false
-        this.aboutDialogPresent = savedInstanceState?.getBoolean("aboutDialogPresent") ?: false
+        this.settingsHidden = savedInstanceState.getBoolean("settingsHidden")
+        this.infoDialogPresent = savedInstanceState.getBoolean("infoDialogPresent")
+        this.aboutDialogPresent = savedInstanceState.getBoolean("aboutDialogPresent")
     }
 }
