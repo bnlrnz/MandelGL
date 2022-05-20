@@ -1,11 +1,8 @@
 package de.tubaf.mandelGL
 
-/**
- * Created by lorenz on 16.06.17 for de.tubaf.lndw
- */
-enum class HueTexture {
-    firehue,
-    icehue,
-    ashhue,
-    psychue
+enum class HueTexture(val filename: String) {
+    FIRE_HUE("firehue"),
+    ICE_HUE("icehue"),
+    ASH_HUE("ashhue"),
+    PSYC_HUE("psychue")
 }
